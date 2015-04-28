@@ -69,13 +69,25 @@ public interface EPubService {
      * @param pk
      * @return file xhtml
      */
-    EpubXhtml getEpubXhtmlByPk (String pk);
+    EpubXhtml getEpubXhtmlByPk (String pk) throws BusinessException;
     
     /**
      * Modifica di un oggetto di tipo EpubXhtml
      * @param epubXhtml 
      */
-    void updateEpubXhtml (EpubXhtml epubXhtml);
+    void updateEpubXhtml (EpubXhtml epubXhtml) throws BusinessException;
     
-    void deleteEpubXhtml (EpubXhtml epubXhtml);
+    boolean deleteEpubXhtml (EpubXhtml epubXhtml) throws BusinessException;
+    
+    EpubCss getEpubCssByPk (String pk) throws BusinessException;
+    
+    void updateEpubCss (EpubCss epubCss) throws BusinessException;
+    
+    boolean deleteEpubCss (EpubCss epubCss) throws BusinessException;
+    
+    EpubImage getEpubImageByPk (String pk) throws BusinessException;
+    
+    void updateEpubImage (EpubImage epubImage) throws BusinessException;
+    
+    boolean deleteEpubImage (EpubImage epubImage) throws BusinessException;
 }

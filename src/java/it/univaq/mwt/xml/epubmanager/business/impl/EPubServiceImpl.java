@@ -510,7 +510,7 @@ public class EPubServiceImpl implements EPubService {
     }
 
     @Override
-    public void deleteEpubXhtml(EpubXhtml epubXhtml) {
+    public boolean deleteEpubXhtml(EpubXhtml epubXhtml) {
         Connection con = null;
         PreparedStatement st = null;
         int result;
@@ -534,14 +534,232 @@ public class EPubServiceImpl implements EPubService {
                 } catch (SQLException e) {
                 }
             }
-
         }
         
         if (result > 0) {
             // rimuovo il file dal file system
             File file = new File(UPLOAD_DIR + epubXhtml.getEpub() + File.separator + epubXhtml.getPath());
             boolean delete = file.delete();
+            return delete;
         }
+        
+        return false;
+    }
+    
+    @Override
+    public EpubCss getEpubCssByPk (String pk) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        EpubCss result = null;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("select * from css where id = ?");
+            st.setString(1, pk);
+            rs = st.executeQuery();
+            if (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                String path = rs.getString("path");
+                String contentType = rs.getString("contentType");
+                String epub = rs.getString("epub");
+                result = new EpubCss(id, name, path, null, contentType, epub);
+            }
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+
+        }
+        return result;
+    }
+    
+    @Override
+    public void updateEpubCss (EpubCss epubCss) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("update css set name=?, path=?, contentType=? where id=?");
+            st.setString(1, epubCss.getName());
+            st.setString(2, epubCss.getPath());
+            st.setString(3, epubCss.getContentType());
+            st.setString(4, epubCss.getId());
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public boolean deleteEpubCss(EpubCss epubCss) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        int result;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("delete from css where id=?");
+            st.setString(1, epubCss.getId());
+            result = st.executeUpdate();
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+        
+        if (result > 0) {
+            // rimuovo il file dal file system
+            File file = new File(UPLOAD_DIR + epubCss.getEpub() + File.separator + epubCss.getPath());
+            boolean delete = file.delete();
+            return delete;
+        }
+        
+        return false;
+    }
+
+    @Override
+    public EpubImage getEpubImageByPk (String pk) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        EpubImage result = null;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("select * from image where id = ?");
+            st.setString(1, pk);
+            rs = st.executeQuery();
+            if (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                String path = rs.getString("path");
+                String contentType = rs.getString("contentType");
+                String epub = rs.getString("epub");
+                result = new EpubImage(id, name, path, null, contentType, epub);
+            }
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+
+        }
+        return result;
+    }
+    
+    @Override
+    public void updateEpubImage (EpubImage epubImage) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("update image set name=?, path=?, contentType=? where id=?");
+            st.setString(1, epubImage.getName());
+            st.setString(2, epubImage.getPath());
+            st.setString(3, epubImage.getContentType());
+            st.setString(4, epubImage.getId());
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+
+        }
+    }
+    
+    @Override
+    public boolean deleteEpubImage(EpubImage epubImage) throws BusinessException {
+        Connection con = null;
+        PreparedStatement st = null;
+        int result;
+        try {
+            con = dataSource.getConnection();
+            st = con.prepareStatement("delete from image where id=?");
+            st.setString(1, epubImage.getId());
+            result = st.executeUpdate();
+        } catch (SQLException e) {
+            throw new BusinessException(e);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+        
+        if (result > 0) {
+            // rimuovo il file dal file system
+            File file = new File(UPLOAD_DIR + epubImage.getEpub() + File.separator + epubImage.getPath());
+            boolean delete = file.delete();
+            return delete;
+        }
+        
+        return false;
     }
 
 }
