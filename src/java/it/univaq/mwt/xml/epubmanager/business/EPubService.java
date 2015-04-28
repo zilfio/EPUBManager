@@ -1,6 +1,5 @@
 package it.univaq.mwt.xml.epubmanager.business;
 
-import it.univaq.mwt.xml.epubmanager.business.model.Epub;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubCss;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
@@ -28,7 +27,7 @@ public interface EPubService {
      * @return L'intero restituito dovrà rappresentare in maniera univoca l’elemento appena inserito.
      * @throws BusinessException 
      */
-    String addXHTML (long token, EpubXhtml epubXhtml) throws BusinessException; 
+    int addXHTML (long token, EpubXhtml epubXhtml) throws BusinessException; 
     
     /**
      * Aggiunge un file CSS (foglio di stile) all’ebook specificato dal token.
@@ -37,7 +36,7 @@ public interface EPubService {
      * @return  L'intero restituito dovrà rappresentare in maniera univoca l’elemento appena inserito.
      * @throws BusinessException 
      */
-    String addStylesheet (long token, EpubCss epubCss) throws BusinessException;
+    int addStylesheet (long token, EpubCss epubCss) throws BusinessException;
     
     /**
      * Aggiunge un’immagine del tipo specificato all’interno dell’ebook specificato dal token.
@@ -46,7 +45,7 @@ public interface EPubService {
      * @return L'intero restituito dovrà rappresentare in maniera univoca l’elemento appena inserito.
      * @throws BusinessException 
      */
-    String addImage (long token, EpubImage epubImage) throws BusinessException;
+    int addImage (long token, EpubImage epubImage) throws BusinessException;
 
     /**
      * Genera l'ebook specificato dal token, dopo aver eventualmente eseguito delle verifiche di
@@ -55,46 +54,28 @@ public interface EPubService {
      * @param token
      * @throws BusinessException 
      */
-    void finalizeEpub (Epub epub, long token) throws BusinessException;
+    void finalizeEpub (long token) throws BusinessException;
+    
+    public List<EpubXhtml> findAllEpubXhtml(long epub) throws BusinessException;
+    
+    public List<EpubCss> findAllEpubCss(long epub) throws BusinessException;
+    
+    public List<EpubImage> findAllEpubImage(long epub) throws BusinessException;
+    
+    public Metadata getEpubMetadataByPk(String pk) throws BusinessException;
     
     /**
      * Restituisce l'oggetto che rappresenta il file XHTML dato il suo id
-     * @param list
-     * @param id
+     * @param pk
      * @return file xhtml
      */
-    EpubXhtml getEpubXhtmlById (List<EpubXhtml> list, String id);
+    EpubXhtml getEpubXhtmlByPk (String pk);
     
     /**
      * Modifica di un oggetto di tipo EpubXhtml
-     * @param epub
      * @param epubXhtml 
      */
-    void updateEpubXhtml (Epub epub, EpubXhtml epubXhtml);
+    void updateEpubXhtml (EpubXhtml epubXhtml);
     
-    void deleteEpubXhtml (long token, List<EpubXhtml> list, EpubXhtml epubXhtml);
-    
-    /**
-     * Restituisce l'oggetto che rappresenta il file CSS dato il suo id
-     * @param list
-     * @param id
-     * @return 
-     */
-    EpubCss getEpubCssById (List<EpubCss> list, String id);
-    
-    void updateEpubCss (Epub epub, EpubCss epubCss);
-    
-    void deleteEpubCss (long token, List<EpubCss> list, EpubCss epubCss);
-    
-    /**
-     * Restituisce l'oggetto che rappresenta l'immagine dato il suo id
-     * @param list
-     * @param id
-     * @return 
-     */
-    EpubImage getEpubImageById (List<EpubImage> list, String id);
-    
-    void updateEpubImage (Epub epub, EpubImage epubImage);
-    
-    void deleteEpubImage (long token, List<EpubImage> list, EpubImage epubImage);
+    void deleteEpubXhtml (EpubXhtml epubXhtml);
 }

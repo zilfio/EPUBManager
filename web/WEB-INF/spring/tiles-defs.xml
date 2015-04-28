@@ -56,15 +56,4 @@
         <put-attribute name="body" value="/WEB-INF/views/packager/download_epub.jsp"/>
     </definition>
     
-    <!-- manager pages -->
-    
-    <definition name="epub.upload" extends="standard">
-        <put-attribute name="action" value="/manager/create"/>
-        <put-attribute name="body" value="/WEB-INF/views/manager/epub_upload.jsp"/>
-    </definition>
-    
-    <definition name="epub.upload.ok" extends="standard">
-        <put-attribute name="body" value="/WEB-INF/views/manager/epub_upload_ok.jsp"/>
-    </definition>
-    
 </tiles-definitions>

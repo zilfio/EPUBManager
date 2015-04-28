@@ -6,6 +6,7 @@
         $(document).ready(function() {
             $("#path").attr('readonly', true);
             $("#contentType").attr('readonly', true);
+            $("#epub").attr('readonly', true);
             $('#tipiammessi').tooltip();
         });
     </script>
@@ -59,6 +60,11 @@
         <label for="contentType">Content Type</label>
         <form:input id="contentType" path="contentType" cssClass="form-control" />
         <form:errors path="contentType" cssClass="alert-danger" />
+    </div>
+    <div class="form-group">
+        <label for="epub">EPUB</label>
+        <form:input id="epub" path="epub" cssClass="form-control" />
+        <form:errors path="epub" cssClass="alert-danger" />
     </div>
     <div class="form-group">
         <label for="type">Type (<a href="#" id="tipiammessi" data-toggle="tooltip" data-original-title="cover, title-page, toc (table of contents), index, glossary, acknowledgements, bibliography, colophon, copyright-page, dedication, epigraph, foreword, loi (list of illustrations), lot (list of tables), notes, preface, text, other.[...]">tipi ammessi</a>)</label>

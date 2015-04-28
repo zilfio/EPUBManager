@@ -25,6 +25,7 @@
     </div>
 </div>
 <form:form action="${pageContext.request.contextPath}${requestScope.action}" method="POST" enctype="multipart/form-data">
+    <input type="text" id="epub" name="epub" value="${epub}" />
     <div class="well">
         <div class="form-group">
             <label for="xhtmlfiles"><spring:message code="uploadresources.xhtml" /></label>

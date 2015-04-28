@@ -10,14 +10,14 @@ public class EpubXhtml extends EpubResource implements Serializable, Comparable<
     public EpubXhtml() {
     }
     
-    public EpubXhtml(String id, String name, String path, byte[] file, int index, String contentType, String type) {
-        super(id, name, path, file, contentType);
+    public EpubXhtml(String id, String name, String path, byte[] file, int index, String contentType, String epub, String type) {
+        super(id, name, path, file, contentType, epub);
         this.index = index;
         this.type = type;
     }
 
-    public EpubXhtml(String name, String path, byte[] file, int index, String contentType, String type) {
-        super(name, path, file, contentType);
+    public EpubXhtml(String name, String path, byte[] file, int index, String contentType, String epub, String type) {
+        super(name, path, file, contentType, epub);
         this.index = index;
         this.type = type;
     }

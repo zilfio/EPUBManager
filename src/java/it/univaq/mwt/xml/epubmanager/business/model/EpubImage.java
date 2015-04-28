@@ -7,12 +7,12 @@ public class EpubImage extends EpubResource implements Serializable {
     public EpubImage() {
     }
     
-    public EpubImage(String id, String name, String path, byte[] file, String contentType) {
-        super(id, name, path, file, contentType);
+    public EpubImage(String id, String name, String path, byte[] file, String contentType, String epub) {
+        super(id, name, path, file, contentType, epub);
     }
 
-    public EpubImage(String name, String path, byte[] file, String contentType) {
-        super(name, path, file, contentType);
+    public EpubImage(String name, String path, byte[] file, String contentType, String epub) {
+        super(name, path, file, contentType, epub);
     }
 
     @Override
