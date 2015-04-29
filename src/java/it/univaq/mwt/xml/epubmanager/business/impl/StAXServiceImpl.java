@@ -6,12 +6,14 @@ import it.univaq.mwt.xml.epubmanager.business.model.EpubCss;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
 import it.univaq.mwt.xml.epubmanager.business.model.Metadata;
+import it.univaq.mwt.xml.epubmanager.common.utility.XMLUtil;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -102,6 +104,129 @@ public class StAXServiceImpl implements StAXService {
             xmlwriter.writeEndElement();             
             
             xmlwriter.writeEndElement();  
+
+            //chiudiamo il documento
+            xmlwriter.writeEndDocument();
+        } catch (XMLStreamException ex) {
+            throw new BusinessException("XMLStreamException", ex);
+        } catch (IOException ex) {
+            throw new BusinessException("IOException", ex);
+        } finally {
+            try {
+                if (xmlwriter != null) {
+                    xmlwriter.close();
+                }
+                if (output != null) {
+                    output.close();
+                }
+            } catch (IOException ex) {
+                throw new BusinessException("IOException", ex);
+            } catch (XMLStreamException ex) {
+                throw new BusinessException("XMLStreamException", ex);
+            }
+        }
+    }
+    
+    @Override
+    public void createTocNcxXMLFile2(Metadata metadata, List<EpubXhtml> xhtmls, String path) throws BusinessException {
+        Writer output = null;
+        XMLStreamWriter xmlwriter = null;
+        try {
+            //è necessario che l'encoding dello stream usato per l'output
+            //coincida con quello specificato all'apertura del documento
+            //con il metodo writeStartdocument!
+            output = new OutputStreamWriter(new FileOutputStream(path + "toc.ncx"), "UTF-8");
+            XMLOutputFactory f = XMLOutputFactory.newInstance();
+            xmlwriter = f.createXMLStreamWriter(output);
+
+            //apriamo il documento, dichiarandone la versione di XML e l'encoding
+            xmlwriter.writeStartDocument("UTF-8", "1.0");
+            //la dichiarazione doctype viene trascritta direttamente nell'output
+            xmlwriter.writeDTD("<!DOCTYPE ncx PUBLIC \"-//NISO//DTD ncx 2005-1//EN\" \"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd\">");
+
+            xmlwriter.writeStartElement("ncx");
+            xmlwriter.writeAttribute("xmlns", "http://www.daisy.org/z3986/2005/ncx/");
+            xmlwriter.writeAttribute("version", "2005-1");
+
+            xmlwriter.writeStartElement("head");
+            xmlwriter.writeStartElement("meta");
+            xmlwriter.writeAttribute("name", "dtb:uid");
+            xmlwriter.writeAttribute("content", metadata.getIdentifier());
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeStartElement("meta");
+            xmlwriter.writeAttribute("name", "dtb:depth");
+            xmlwriter.writeAttribute("content", "1");
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeStartElement("meta");
+            xmlwriter.writeAttribute("name", "dtb:totalPageCount");
+            xmlwriter.writeAttribute("content", "0");
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeStartElement("meta");
+            xmlwriter.writeAttribute("name", "dtb:maxPageNumber");
+            xmlwriter.writeAttribute("content", "0");
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeStartElement("docTitle");
+            xmlwriter.writeStartElement("text");
+            xmlwriter.writeCharacters(metadata.getTitle());
+            xmlwriter.writeEndElement();
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeStartElement("navMap");
+
+            List<EpubXhtml> epubXhtmls = xhtmls;
+            List<EpubXhtml> epubXhtmlsOrd = epubXhtmls;
+
+            // Collections.sort(epubXhtmlsOrd, Collections.reverseOrder());
+            Collections.sort(epubXhtmlsOrd);
+            int playOrder = 1;
+            for (EpubXhtml epubXhtml : epubXhtmlsOrd) {
+                xmlwriter.writeStartElement("navPoint");
+                xmlwriter.writeAttribute("id", "navPoint-" + epubXhtml.getId());
+                
+                xmlwriter.writeAttribute("playOrder", Integer.toString(playOrder));
+                playOrder++;
+                xmlwriter.writeStartElement("navLabel");
+                xmlwriter.writeStartElement("text");
+                xmlwriter.writeCharacters(epubXhtml.getName());
+                xmlwriter.writeEndElement();
+                xmlwriter.writeEndElement();
+                xmlwriter.writeStartElement("content");
+                xmlwriter.writeAttribute("src", epubXhtml.getPath());
+                xmlwriter.writeEndElement();
+               
+                //Controllo se nel file ci sono ancore per definire i navPoint delle ancore
+                List<String> ancore = XMLUtil.trovaAncore(epubXhtml.getPath(),String.valueOf(metadata.getIdentifier()));
+                Iterator<String> i = ancore.iterator();
+                while (i.hasNext()) {
+                    String ancora = i.next();
+                    xmlwriter.writeStartElement("navPoint");
+                    xmlwriter.writeAttribute("id", "navPoint-" + playOrder);
+                    
+                    xmlwriter.writeAttribute("playOrder", Integer.toString(playOrder));
+                    playOrder++;
+                    xmlwriter.writeStartElement("navLabel");
+                    xmlwriter.writeStartElement("text");
+                    xmlwriter.writeCharacters(ancora);
+                    xmlwriter.writeEndElement();
+                    xmlwriter.writeEndElement();
+                    xmlwriter.writeStartElement("content");
+                    xmlwriter.writeAttribute("src", epubXhtml.getPath());
+                    xmlwriter.writeEndElement();
+                    xmlwriter.writeEndElement();
+                }
+
+                xmlwriter.writeEndElement();
+            }
+
+            xmlwriter.writeEndElement();
+
+            xmlwriter.writeEndElement();
 
             //chiudiamo il documento
             xmlwriter.writeEndDocument();

@@ -14,7 +14,9 @@ public interface StAXService {
     
     public void createTocNcxXMLFile (Metadata metadata, List<EpubXhtml> xhtmls, String path) throws BusinessException;
     
-    public void createContentXMLFile(Metadata metadata, List<EpubXhtml> xhtmls, List<EpubCss> csses, List<EpubImage> images, String path) throws BusinessException;
+    public void createTocNcxXMLFile2 (Metadata metadata, List<EpubXhtml> xhtmls, String path) throws BusinessException;
+    
+    public void createContentXMLFile (Metadata metadata, List<EpubXhtml> xhtmls, List<EpubCss> csses, List<EpubImage> images, String path) throws BusinessException;
     
     public void createContainerXMLFile (String path) throws BusinessException;
     

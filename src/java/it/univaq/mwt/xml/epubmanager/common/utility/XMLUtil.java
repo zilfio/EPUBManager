@@ -4,11 +4,16 @@ import it.univaq.mwt.xml.epubmanager.business.MyErrorHandler;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
@@ -19,6 +24,8 @@ import org.xml.sax.SAXException;
  * @author Zilfio
  */
 public class XMLUtil {
+    
+    private static final String UPLOAD_DIR = Config.getSetting("uploadDirectory");
     
     /**
      * Carica un documento XML
@@ -148,6 +155,68 @@ public class XMLUtil {
         
         // ritorno lo stato di errore del mio handler
         return h.hasErrors();
+    }
+    
+    /**
+  * Questo metodo cerca le ancore di un file xhtml per volta Una volta
+  * trovate inserisce in un ArrayList il valore dell'attributo href
+  * naturalmente solo se quest'attributo non contiene "*.html"
+  * @param path
+  * @param epub
+  * @return 
+  */
+    public static List<String> trovaAncore(String path, String dir) {
+       
+        File xhtml = new File(UPLOAD_DIR + File.separator + dir + File.separator + path);
+        System.out.println(UPLOAD_DIR + File.separator + dir + File.separator + path);
+        List<String> ancore = new ArrayList<String>();
+        /*DOM*/
+        DocumentBuilderFactory docF = DocumentBuilderFactory.newInstance();
+        docF.setNamespaceAware(false);
+        docF.setValidating(false);
+        DocumentBuilder docB = null;
+        NodeList body = null;
+        try {
+            //Do not perform namespace processing.  
+            docF.setFeature("http://xml.org/sax/features/namespaces", false);
+            //Do not report validity errors.  
+            docF.setFeature("http://xml.org/sax/features/validation", false);
+            //	Build the grammar but do not use the default attributes and attribute types information it contains.   
+            docF.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            //	Ignore the external DTD completely.  
+            docF.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            docB = docF.newDocumentBuilder();
+
+            //parsiamo direttamente il file che è sicuramente xhtml
+            Document doc = docB.parse(xhtml);
+
+            body = doc.getElementsByTagName("body");
+            //Può avere al massimo 1 body
+            Node x = body.item(0);
+            //Se non c'è il body non ci sono parole da contare
+            if (x != null) {
+                NodeList listAncore = doc.getElementsByTagName("a");
+
+                if (listAncore.getLength() != 0) {
+                    System.out.println("Cerco le ancore giuste");
+                    for (int i = 0; i < listAncore.getLength(); i++) {
+                        //Su ciascun nodo trovato leggiamo il contenuto con namespace
+                        Element element = (Element) listAncore.item(i);
+                        String attribute = element.getAttribute("href");
+                        //Se l'attributo contiene image si tratta di un'immagine ed aumentiamo il contatore d'immagini
+                        if (!attribute.contains(".html") || !attribute.contains(".html")) {
+                            if(!attribute.contains("http:"))
+                            ancore.add(attribute);
+                        }
+                    }
+                }
+                
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       return ancore;  
     }
     
 }
