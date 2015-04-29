@@ -6,11 +6,15 @@ import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
 import it.univaq.mwt.xml.epubmanager.business.model.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
@@ -33,14 +37,15 @@ public class RESTController {
     
     @RequestMapping(value="/epubs/{token}",method={RequestMethod.GET})
     @ResponseBody
-    public void finalizeEpub (@PathVariable("token") String epub) {
+    public String finalizeEpub (@PathVariable("token") String epub) {
         long token = Long.parseLong(epub);
+        return Long.toString(token);
         //service.finalizeEpub(token);
     }
     
     @RequestMapping(value="/epubs/{token}/texts",method={RequestMethod.POST})
     @ResponseBody
-    public int insertXhtml (@PathVariable("token") String epub, EpubXhtml epubXhtml) {
+    public int insertXhtml (@PathVariable("token") String epub, @RequestBody EpubXhtml epubXhtml) {
         long token = Long.parseLong(epub);
         int xhtml = service.addXHTML(token, epubXhtml);
         return xhtml;
@@ -52,6 +57,9 @@ public class RESTController {
     public EpubXhtml getXhtml (@PathVariable("id") String id) {
         // long token = Long.parseLong(epub);
         EpubXhtml xhtml = service.getEpubXhtmlByPk(id);
+        if (xhtml == null) {
+            throw new NotFoundException();
+        }
         return xhtml;
     }
     
@@ -65,7 +73,7 @@ public class RESTController {
     
     @RequestMapping(value="/epubs/{token}/images",method={RequestMethod.POST})
     @ResponseBody
-    public int insertImage (@PathVariable("token") String epub, EpubImage epubImage) {
+    public int insertImage (@PathVariable("token") String epub, @RequestBody EpubImage epubImage) {
         long token = Long.parseLong(epub);
         int image = service.addImage(token, epubImage);
         return image;
@@ -89,7 +97,7 @@ public class RESTController {
     
     @RequestMapping(value="/epubs/{token}/stylesheets",method={RequestMethod.POST})
     @ResponseBody
-    public int insertCss (@PathVariable("token") String epub, EpubCss epubCss) {
+    public int insertCss (@PathVariable("token") String epub, @RequestBody EpubCss epubCss) {
         long token = Long.parseLong(epub);
         int css = service.addStylesheet(token, epubCss);
         return css;
@@ -109,5 +117,14 @@ public class RESTController {
     public void deleteCss (@PathVariable("token") String epub, @PathVariable("id") String id, EpubCss epubCss) {
         // long token = Long.parseLong(epub);
         service.deleteEpubCss(epubCss);
+    }
+    
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not found")
+    void handleNotFound(NotFoundException exc) {
+    }
+
+    class NotFoundException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
     }
 }
