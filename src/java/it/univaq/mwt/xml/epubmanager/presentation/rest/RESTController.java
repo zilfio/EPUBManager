@@ -37,10 +37,9 @@ public class RESTController {
     
     @RequestMapping(value="/epubs/{token}",method={RequestMethod.GET})
     @ResponseBody
-    public String finalizeEpub (@PathVariable("token") String epub) {
+    public void finalizeEpub (@PathVariable("token") String epub) {
         long token = Long.parseLong(epub);
-        return Long.toString(token);
-        //service.finalizeEpub(token);
+        service.finalizeEpub(token);
     }
     
     @RequestMapping(value="/epubs/{token}/texts",method={RequestMethod.POST})
@@ -68,6 +67,9 @@ public class RESTController {
     public void deleteXhtml (@PathVariable("token") String epub, @PathVariable("id") String id) {
         // long token = Long.parseLong(epub);
         EpubXhtml xhtml = service.getEpubXhtmlByPk(id);
+        if (xhtml == null) {
+            throw new NotFoundException();
+        }
         service.deleteEpubXhtml(xhtml);
     }
     
@@ -85,6 +87,9 @@ public class RESTController {
     public EpubImage getImage (@PathVariable("id") String id) {
         // long token = Long.parseLong(epub);
         EpubImage image = service.getEpubImageByPk(id);
+        if (image == null) {
+            throw new NotFoundException();
+        }
         return image;
     }
     
@@ -92,6 +97,9 @@ public class RESTController {
     @ResponseBody
     public void deleteImage (@PathVariable("token") String epub, @PathVariable("id") String id, EpubImage epubImage) {
         // long token = Long.parseLong(epub);
+        if (epubImage == null) {
+            throw new NotFoundException();
+        }
         service.deleteEpubImage(epubImage);
     }
     
@@ -109,6 +117,9 @@ public class RESTController {
     public EpubCss getCss (@PathVariable("id") String id) {
         // long token = Long.parseLong(epub);
         EpubCss css = service.getEpubCssByPk(id);
+        if (css == null) {
+            throw new NotFoundException();
+        }
         return css;
     }
     
@@ -116,6 +127,9 @@ public class RESTController {
     @ResponseBody
     public void deleteCss (@PathVariable("token") String epub, @PathVariable("id") String id, EpubCss epubCss) {
         // long token = Long.parseLong(epub);
+        if (epubCss == null) {
+            throw new NotFoundException();
+        }
         service.deleteEpubCss(epubCss);
     }
     
