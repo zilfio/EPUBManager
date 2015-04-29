@@ -22,6 +22,10 @@
 <!-- Custom CSS -->
 <link href="${pageContext.request.contextPath}/resources/modern-business/modern-business.css" rel="stylesheet">
 
+<!-- DataTables CSS -->
+<link href="${pageContext.request.contextPath}/resources/datatables/css/dataTables.bootstrap.css"
+    rel="stylesheet">
+
 <!-- Select2 CSS -->
 <link
     href="${pageContext.request.contextPath}/resources/select2/select2.css"
@@ -53,6 +57,14 @@
 <!-- Bootstrap Core JavaScript -->
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/bootstrap/js/bootstrap.min.js"></script>
+     
+<!-- DataTables JavaScript -->
+<script
+	src="${pageContext.request.contextPath}/resources/datatables/js/jquery.dataTables.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/datatables/js/dataTables.bootstrap.js"></script>
+        
+<script	src="${pageContext.request.contextPath}/resources/datatables/my.js"></script>        
         
 <!-- Chosen JavaScript -->
 <script type="text/javascript"

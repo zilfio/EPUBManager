@@ -40,16 +40,55 @@
         <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_views.jsp"/>
     </definition>
     
-    <definition name="orderresorces.updateform" extends="standard">
-        <put-attribute name="action" value="/packager/orderresources/update"/>
-        <put-attribute name="update" value="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_form.jsp"/>
+    <definition name="uploadresources.xhtml" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/insertxhtml"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/uploadresource_xhtml_form.jsp"/>
     </definition>
     
-    <definition name="orderresorces.deleteform" extends="standard">
-        <put-attribute name="action" value="/packager/orderresources/delete"/>
+    <definition name="uploadresources.css" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/insertcss"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/uploadresource_css_form.jsp"/>
+    </definition>
+    
+    <definition name="uploadresources.image" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/insertimage"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/uploadresource_image_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.updatexhtmlform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/updatexhtml"/>
+        <put-attribute name="update" value="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_xhtml_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.deletexhtmlform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/deletexhtml"/>
         <put-attribute name="delete" value="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_xhtml_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.updatecssform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/updatecss"/>
+        <put-attribute name="update" value="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_css_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.deletecssform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/deletecss"/>
+        <put-attribute name="delete" value="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_css_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.updateimageform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/updateimage"/>
+        <put-attribute name="update" value="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_image_form.jsp"/>
+    </definition>
+    
+    <definition name="orderresorces.deleteimageform" extends="standard">
+        <put-attribute name="action" value="/packager/orderresources/deleteimage"/>
+        <put-attribute name="delete" value="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/packager/orderresources_image_form.jsp"/>
     </definition>
     
     <definition name="download.epub" extends="standard">

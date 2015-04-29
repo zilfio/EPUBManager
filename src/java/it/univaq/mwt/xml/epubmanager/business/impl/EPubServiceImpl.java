@@ -42,8 +42,14 @@ public class EPubServiceImpl implements EPubService {
 
         long result = Long.parseLong(metadata.getIdentifier());
 
-        // creo una cartella con l'isbn dell'epub
-        DirectoryUtil.mkdir(UPLOAD_DIR, metadata.getIdentifier());
+        File file = new File(UPLOAD_DIR + metadata.getIdentifier());
+        boolean test = file.exists();
+        if (test == false) {
+            // creo una cartella con l'isbn dell'epub
+            DirectoryUtil.mkdir(UPLOAD_DIR, metadata.getIdentifier());
+        } else {
+            throw new BusinessException("Cartella già esistente!");
+        }
 
         Connection con = null;
         PreparedStatement st = null;
@@ -79,6 +85,32 @@ public class EPubServiceImpl implements EPubService {
 
     @Override
     public int addXHTML(long token, EpubXhtml epubXhtml) throws BusinessException {
+        //creating a temp file
+        File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubXhtml.getPath());
+        boolean test = temp.exists();
+        if (test == false) {
+           try {
+                //saving image to file
+                FileUtils.writeByteArrayToFile(temp, epubXhtml.getFile());
+                System.out.println("Upload dei file " + epubXhtml.getPath() + " avvenuto con successo!");
+            } catch (IOException ex) {
+                throw new BusinessException("Upload del file " + epubXhtml.getPath() + " fallito!", ex);
+            } 
+        } else {
+            throw new BusinessException("File esistente: upload fallito!");
+        }
+        
+        // controllo che il file sia valido
+        boolean b = XMLUtil.validateXhtml(temp, true);
+        System.out.println("ERRORI NELLA VALIDAZIONE? " + b);
+
+        // cancello il file se ho errori di validazione
+        if (b == true) {
+            System.out.println("Cancello il file uplodato: non è valido!");
+            temp.delete();
+            throw new BusinessException("Il file risulta non valido!");
+        }
+        
         Connection con = null;
         PreparedStatement st = null;
         int result;
@@ -113,34 +145,26 @@ public class EPubServiceImpl implements EPubService {
             }
         }
 
-        if (result != 0) {
-            //creating a temp file
-            File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubXhtml.getPath());
-            try {
-                //saving image to file
-                FileUtils.writeByteArrayToFile(temp, epubXhtml.getFile());
-                System.out.println("Upload dei file " + epubXhtml.getPath() + " avvenuto con successo!");
-            } catch (IOException ex) {
-                throw new BusinessException("Upload del file " + epubXhtml.getPath() + " fallito!", ex);
-            }
-
-            // controllo che il file sia valido
-            boolean b = XMLUtil.validateXhtml(temp, true);
-            System.out.println("ERRORI NELLA VALIDAZIONE? " + b);
-
-            // cancello il file se ho errori di validazione
-            if (b == true) {
-                System.out.println("Cancello il file uplodato: non è valido!");
-                temp.delete();
-            }
-            return result;
-        } else {
-            return 0;
-        }
+        return result;
     }
 
     @Override
     public int addStylesheet(long token, EpubCss epubCss) throws BusinessException {
+        //creating a temp file
+        File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubCss.getPath());
+        boolean test = temp.exists();
+        if (test == false) {
+            try {
+                //saving image to file
+                FileUtils.writeByteArrayToFile(temp, epubCss.getFile());
+                System.out.println("Upload del file " + epubCss.getPath() + " avvenuto con successo!");
+            } catch (IOException ex) {
+                throw new BusinessException("Upload del file " + epubCss.getPath() + " fallito!", ex);
+            }
+        } else {
+            throw new BusinessException("File esistente: upload fallito!");
+        }
+        
         Connection con = null;
         PreparedStatement st = null;
         int result;
@@ -173,24 +197,26 @@ public class EPubServiceImpl implements EPubService {
             }
         }
 
-        if (result != 0) {
-            //creating a temp file
-            File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubCss.getPath());
-            try {
-                //saving image to file
-                FileUtils.writeByteArrayToFile(temp, epubCss.getFile());
-                System.out.println("Upload del file " + epubCss.getPath() + " avvenuto con successo!");
-            } catch (IOException ex) {
-                throw new BusinessException("Upload del file " + epubCss.getPath() + " fallito!", ex);
-            }
-            return result;
-        } else {
-            return 0;
-        }
+        return result;
     }
 
     @Override
     public int addImage(long token, EpubImage epubImage) throws BusinessException {
+        //creating a temp file
+        File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubImage.getPath());
+        boolean test = temp.exists();
+        if (test == false) {
+            try {
+                //saving image to file
+                FileUtils.writeByteArrayToFile(temp, epubImage.getFile());
+                System.out.println("Upload del file " + epubImage.getPath() + " avvenuto con successo!");
+            } catch (IOException ex) {
+                throw new BusinessException("Upload del file " + epubImage.getPath() + " fallito!", ex);
+            }
+        } else {
+            throw new BusinessException("File esistente: upload fallito!");
+        }
+        
         Connection con = null;
         PreparedStatement st = null;
         int result;
@@ -223,20 +249,7 @@ public class EPubServiceImpl implements EPubService {
             }
         }
 
-        if (result != 0) {
-            //creating a temp file
-            File temp = new File(UPLOAD_DIR + Long.toString(token) + File.separator + epubImage.getPath());
-            try {
-                //saving image to file
-                FileUtils.writeByteArrayToFile(temp, epubImage.getFile());
-                System.out.println("Upload del file " + epubImage.getPath() + " avvenuto con successo!");
-            } catch (IOException ex) {
-                throw new BusinessException("Upload del file " + epubImage.getPath() + " fallito!", ex);
-            }
-            return result;
-        } else {
-            return 0;
-        }
+        return result;
     }
 
     @Override

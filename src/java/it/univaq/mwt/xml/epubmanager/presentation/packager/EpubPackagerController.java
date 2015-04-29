@@ -4,9 +4,12 @@ import it.univaq.mwt.xml.epubmanager.business.BusinessException;
 import it.univaq.mwt.xml.epubmanager.business.EPubService;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubCss;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
+import it.univaq.mwt.xml.epubmanager.business.model.EpubResource;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
 import it.univaq.mwt.xml.epubmanager.business.model.Metadata;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/packager")
 public class EpubPackagerController {
-    
+
     @Autowired
     private EPubService service;
 
@@ -30,7 +33,7 @@ public class EpubPackagerController {
 
     @RequestMapping(value = "/create", method = {RequestMethod.GET})
     public String createMetadataStart(Model model) {
-        
+
         model.addAttribute("metadata", new Metadata());
         return "metadata.createform";
     }
@@ -43,7 +46,7 @@ public class EpubPackagerController {
         }
         long id = service.startEpub(metadata);
         System.out.println("ID univoco per le altre chiamate: " + id);
-        return "redirect:/packager/uploadresources?epub="+id;
+        return "redirect:/packager/uploadresources?epub=" + id;
     }
 
     @RequestMapping(value = "/uploadresources", method = {RequestMethod.GET})
@@ -57,21 +60,26 @@ public class EpubPackagerController {
             @RequestParam("xhtmlfiles") MultipartFile[] xhtmlfiles,
             @RequestParam("cssfiles") MultipartFile[] cssfiles,
             @RequestParam("imagefiles") MultipartFile[] imagefiles) throws BusinessException {
-        
+
+        // risorse uplodate con successo
+        List<EpubResource> resourcesUpload = new ArrayList<EpubResource>();
+        // risorse non uplodate
+        List<EpubResource> resourcesNotUpload = new ArrayList<EpubResource>();
+
         // mantine l'ordine di inserimento dei file xhtml
         int order = 0;
-        
+
         // gestione upload dei file XHTML
         for (MultipartFile xhtmlfile : xhtmlfiles) {
-            if (!xhtmlfile.isEmpty()) {               
+            if (!xhtmlfile.isEmpty()) {
                 try {
                     byte[] bytes = xhtmlfile.getBytes();
                     EpubXhtml epubXhtml = new EpubXhtml(null, FilenameUtils.getBaseName(xhtmlfile.getOriginalFilename()), xhtmlfile.getOriginalFilename(), bytes, ++order, "application/xhtml+xml", epub, null);
                     int result = service.addXHTML(Long.parseLong(epub), epubXhtml);
                     if (result != 0) {
-                        // traccia del file appena inserito
+                        resourcesUpload.add(epubXhtml);
                     } else {
-                        // traccia del file non inserito
+                        resourcesNotUpload.add(epubXhtml);
                     }
                 } catch (IOException e) {
                     throw new BusinessException("Errore I/O", e);
@@ -84,13 +92,13 @@ public class EpubPackagerController {
             if (!cssfile.isEmpty()) {
                 try {
                     byte[] bytes = cssfile.getBytes();
-                    EpubCss epubCss = new EpubCss(null , FilenameUtils.getBaseName(cssfile.getOriginalFilename()), cssfile.getOriginalFilename(), bytes, cssfile.getContentType(), epub);
+                    EpubCss epubCss = new EpubCss(null, FilenameUtils.getBaseName(cssfile.getOriginalFilename()), cssfile.getOriginalFilename(), bytes, cssfile.getContentType(), epub);
                     System.out.println(epubCss.toString());
                     int result = service.addStylesheet(Long.parseLong(epub), epubCss);
                     if (result != 0) {
-                        
+                        resourcesUpload.add(epubCss);
                     } else {
-                        
+                        resourcesNotUpload.add(epubCss);
                     }
                 } catch (IOException e) {
                     throw new BusinessException("Errore I/O", e);
@@ -107,9 +115,9 @@ public class EpubPackagerController {
                     System.out.println(epubImage.toString());
                     int result = service.addImage(Long.parseLong(epub), epubImage);
                     if (result != 0) {
-                        
+                        resourcesUpload.add(epubImage);
                     } else {
-                        
+                        resourcesNotUpload.add(epubImage);
                     }
                 } catch (IOException e) {
                     throw new BusinessException("Errore I/O", e);
@@ -117,7 +125,7 @@ public class EpubPackagerController {
             }
         }
 
-        return "redirect:/packager/orderresources?epub="+epub;
+        return "redirect:/packager/orderresources?epub=" + epub;
 
     }
 
@@ -127,51 +135,208 @@ public class EpubPackagerController {
         model.addAttribute("sortingXhtmlFiles", service.findAllEpubXhtml(Long.parseLong(epub)));
         model.addAttribute("sortingCssFiles", service.findAllEpubCss(Long.parseLong(epub)));
         model.addAttribute("sortingImageFiles", service.findAllEpubImage(Long.parseLong(epub)));
-        
+
         model.addAttribute("epub", epub);
-        
+
         return "orderresorces.views";
     }
 
-    @RequestMapping(value = "/orderresources/update", method = {RequestMethod.GET})
+    @RequestMapping(value = "/orderresources/insertxhtml", method = {RequestMethod.GET})
+    public String insertXhtmlStart(@RequestParam("epub") String epub, Model model) {
+
+        model.addAttribute("epub", epub);
+
+        return "uploadresources.xhtml";
+    }
+
+    @RequestMapping(value = "/orderresources/insertxhtml", method = {RequestMethod.POST})
+    public String insertXhtml(@RequestParam("epub") String epub, @RequestParam("xhtmlfile") MultipartFile xhtmlfile) {
+
+        if (!xhtmlfile.isEmpty()) {
+            try {
+                byte[] bytes = xhtmlfile.getBytes();
+                EpubXhtml epubXhtml = new EpubXhtml(null, FilenameUtils.getBaseName(xhtmlfile.getOriginalFilename()), xhtmlfile.getOriginalFilename(), bytes, 0, "application/xhtml+xml", epub, null);
+                int result = service.addXHTML(Long.parseLong(epub), epubXhtml);
+                if (result > 0) {
+
+                } else {
+
+                }
+            } catch (IOException e) {
+                throw new BusinessException("Errore I/O", e);
+            }
+        }
+
+        return "redirect:/packager/orderresources?epub=" + epub;
+    }
+
+    @RequestMapping(value = "/orderresources/insertcss", method = {RequestMethod.GET})
+    public String insertCssStart(@RequestParam("epub") String epub, Model model) {
+
+        model.addAttribute("epub", epub);
+
+        return "uploadresources.css";
+    }
+
+    @RequestMapping(value = "/orderresources/insertcss", method = {RequestMethod.POST})
+    public String insertCss(@RequestParam("epub") String epub, @RequestParam("cssfile") MultipartFile cssfile) {
+
+        if (!cssfile.isEmpty()) {
+            try {
+                byte[] bytes = cssfile.getBytes();
+                EpubCss epubCss = new EpubCss(null, FilenameUtils.getBaseName(cssfile.getOriginalFilename()), cssfile.getOriginalFilename(), bytes, cssfile.getContentType(), epub);
+                System.out.println(epubCss.toString());
+                int result = service.addStylesheet(Long.parseLong(epub), epubCss);
+                if (result > 0) {
+
+                } else {
+
+                }
+            } catch (IOException e) {
+                throw new BusinessException("Errore I/O", e);
+            }
+        }
+
+        return "redirect:/packager/orderresources?epub=" + epub;
+    }
+
+    @RequestMapping(value = "/orderresources/insertimage", method = {RequestMethod.GET})
+    public String insertImageStart(@RequestParam("epub") String epub, Model model) {
+
+        model.addAttribute("epub", epub);
+
+        return "uploadresources.image";
+    }
+
+    @RequestMapping(value = "/orderresources/insertimage", method = {RequestMethod.POST})
+    public String insertImage(@RequestParam("epub") String epub, @RequestParam("imagefile") MultipartFile imagefile) {
+
+        if (!imagefile.isEmpty()) {
+            try {
+                byte[] bytes = imagefile.getBytes();
+                EpubImage epubImage = new EpubImage(null, FilenameUtils.getBaseName(imagefile.getOriginalFilename()), imagefile.getOriginalFilename(), bytes, imagefile.getContentType(), epub);
+                System.out.println(epubImage.toString());
+                int result = service.addImage(Long.parseLong(epub), epubImage);
+                if (result > 0) {
+                    
+                } else {
+                    
+                }
+            } catch (IOException e) {
+                throw new BusinessException("Errore I/O", e);
+            }
+        }
+
+        return "redirect:/packager/orderresources?epub=" + epub;
+    }
+
+    @RequestMapping(value = "/orderresources/updatexhtml", method = {RequestMethod.GET})
     public String updateOrderXhtmlStart(@RequestParam("id") String id, Model model) {
-        
+
         EpubXhtml epubXhtml = service.getEpubXhtmlByPk(id);
         model.addAttribute("epubXhtml", epubXhtml);
 
-        return "orderresorces.updateform";
+        return "orderresorces.updatexhtmlform";
     }
-
-    @RequestMapping(value = "/orderresources/update", method = {RequestMethod.POST})
+    
+    @RequestMapping(value = "/orderresources/updatexhtml", method = {RequestMethod.POST})
     public String updateOrderXhtml(@ModelAttribute EpubXhtml epubXhtml) {
 
         service.updateEpubXhtml(epubXhtml);
 
-        return "redirect:/packager/orderresources?epub="+epubXhtml.getEpub();
+        return "redirect:/packager/orderresources?epub=" + epubXhtml.getEpub();
     }
 
-    @RequestMapping(value = "/orderresources/delete", method = {RequestMethod.GET})
+    @RequestMapping(value = "/orderresources/deletexhtml", method = {RequestMethod.GET})
     public String deleteOrderXhtmlStart(@RequestParam("id") String id, Model model) {
-        
+
         EpubXhtml epubXhtml = service.getEpubXhtmlByPk(id);
         model.addAttribute("epubXhtml", epubXhtml);
 
-        return "orderresorces.deleteform";
+        return "orderresorces.deletexhtmlform";
     }
 
-    @RequestMapping(value = "/orderresources/delete", method = {RequestMethod.POST})
+    @RequestMapping(value = "/orderresources/deletexhtml", method = {RequestMethod.POST})
     public String deleteOrderXhtml(@ModelAttribute EpubXhtml epubXhtml) {
-        
+
         service.deleteEpubXhtml(epubXhtml);
-        
-        return "redirect:/packager/orderresources?epub="+epubXhtml.getEpub();
+
+        return "redirect:/packager/orderresources?epub=" + epubXhtml.getEpub();
+    }
+    
+    @RequestMapping(value = "/orderresources/updatecss", method = {RequestMethod.GET})
+    public String updateOrderCssStart(@RequestParam("id") String id, Model model) {
+
+        EpubCss epubCss = service.getEpubCssByPk(id);
+        model.addAttribute("epubCss", epubCss);
+
+        return "orderresorces.updatecssform";
+    }
+    
+    @RequestMapping(value = "/orderresources/updatecss", method = {RequestMethod.POST})
+    public String updateOrderCss(@ModelAttribute EpubCss epubCss) {
+
+        service.updateEpubCss(epubCss);
+
+        return "redirect:/packager/orderresources?epub=" + epubCss.getEpub();
+    }
+
+    @RequestMapping(value = "/orderresources/deletecss", method = {RequestMethod.GET})
+    public String deleteOrderCssStart(@RequestParam("id") String id, Model model) {
+
+        EpubCss epubCss = service.getEpubCssByPk(id);
+        model.addAttribute("epubCss", epubCss);
+
+        return "orderresorces.deletecssform";
+    }
+
+    @RequestMapping(value = "/orderresources/deletecss", method = {RequestMethod.POST})
+    public String deleteOrderCss(@ModelAttribute EpubCss epubCss) {
+
+        service.deleteEpubCss(epubCss);
+
+        return "redirect:/packager/orderresources?epub=" + epubCss.getEpub();
+    }
+    
+    @RequestMapping(value = "/orderresources/updateimage", method = {RequestMethod.GET})
+    public String updateOrderImageStart(@RequestParam("id") String id, Model model) {
+
+        EpubImage epubImage = service.getEpubImageByPk(id);
+        model.addAttribute("epubImage", epubImage);
+
+        return "orderresorces.updateimageform";
+    }
+    
+    @RequestMapping(value = "/orderresources/updateimage", method = {RequestMethod.POST})
+    public String updateOrderImage(@ModelAttribute EpubImage epubImage) {
+
+        service.updateEpubImage(epubImage);
+
+        return "redirect:/packager/orderresources?epub=" + epubImage.getEpub();
+    }
+
+    @RequestMapping(value = "/orderresources/deleteimage", method = {RequestMethod.GET})
+    public String deleteOrderImageStart(@RequestParam("id") String id, Model model) {
+
+        EpubImage epubImage = service.getEpubImageByPk(id);
+        model.addAttribute("epubImage", epubImage);
+
+        return "orderresorces.deleteimageform";
+    }
+
+    @RequestMapping(value = "/orderresources/deleteimage", method = {RequestMethod.POST})
+    public String deleteOrderImage(@ModelAttribute EpubImage epubImage) {
+
+        service.deleteEpubImage(epubImage);
+
+        return "redirect:/packager/orderresources?epub=" + epubImage.getEpub();
     }
 
     @RequestMapping(value = "/orderok", method = {RequestMethod.GET})
     public String orderResources(@RequestParam("epub") String epub, Model model) {
 
         service.finalizeEpub(Long.parseLong(epub));
-        
+
         return "download.epub";
     }
 }
