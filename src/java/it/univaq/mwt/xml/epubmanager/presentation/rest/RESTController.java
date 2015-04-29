@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-/**
- *
- * @author zilfio
- */
-
 @Controller
 @RequestMapping("/rest")
 public class RESTController {
@@ -30,7 +25,7 @@ public class RESTController {
     
     @RequestMapping(value="/epubs",method={RequestMethod.POST})
     @ResponseBody
-    public String startEpub (Metadata metadata) {
+    public String startEpub (@RequestBody Metadata metadata) {
         long result = service.startEpub(metadata);
         return Long.toString(result);
     }
