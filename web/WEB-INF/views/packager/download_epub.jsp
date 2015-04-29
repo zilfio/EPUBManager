@@ -7,5 +7,5 @@
         </h1>
     </div>
 </div>
-<p>Ok il file è pronto per essere scaricato!</p>
-<a href="#">Scarica</a>
+<p>Ok <span class="glyphicon glyphicon-thumbs-up"></span> il file è pronto per essere scaricato!</p>
+<a href="${pageContext.request.contextPath}/packager/downloadEpub?epub=${epub}" class="btn btn-primary" role="button">Scarica l'EPub</a>

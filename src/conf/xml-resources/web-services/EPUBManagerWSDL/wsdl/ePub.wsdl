@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    name="ePub"
+    targetNamespace="http://www.univaq.it/mwt/soa/ePub.wsdl"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://www.univaq.it/mwt/soa/ePub.wsdl"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd1="http://www.univaq.it/mwt/soa/ePub.xsd1"
+    xmlns:xsd2="http://www.univaq.it/mwt/soa/ePub.xsd2">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">SOA: WSLD del progetto ePubManager</wsdl:documentation>
+    <wsdl:types>
+        <xsd:schema
+            targetNamespace="http://www.univaq.it/mwt/soa/ePub.xsd2"
+            xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsd2="http://www.univaq.it/mwt/soa/ePub.xsd2">
+            <xsd:complexType name="tMetadata">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="identifier" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="title" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="language" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="tEpubCss">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="id" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="name" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="path" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="file" type="xsd:base64Binary"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="contentType" type="xsd:string"/>
+		    <xsd:element maxOccurs="1" minOccurs="1" name="epub" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="tEpubImage">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="id" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="name" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="path" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="file" type="xsd:base64Binary"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="contentType" type="xsd:string"/>
+		    <xsd:element maxOccurs="1" minOccurs="1" name="epub" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="tEpubError">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="code" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="message" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="eEpubError" type="xsd2:tEpubError"/>
+            <xsd:complexType name="tEpubXhtml">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="id" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="name" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="path" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="file" type="xsd:base64Binary"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="contentType" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="index" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="type" type="xsd:string"/>
+		    <xsd:element maxOccurs="1" minOccurs="1" name="epub" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="mMetadata">
+        <wsdl:part name="metadata" type="xsd2:tMetadata"/>
+    </wsdl:message>
+    <wsdl:message name="mInt">
+        <wsdl:part name="elemento" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:message name="mError">
+        <wsdl:part element="xsd2:eEpubError" name="error"/>
+    </wsdl:message>
+    <wsdl:message name="mVoid">   </wsdl:message>
+    <wsdl:message name="mRemoveXhtml">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="xhtml" type="xsd2:tEpubXhtml"/>
+    </wsdl:message>
+    <wsdl:message name="mLong">
+        <wsdl:part name="token" type="xsd:long"/>
+    </wsdl:message>
+    <wsdl:message name="mRemoveCss">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="css" type="xsd2:tEpubCss"/>
+    </wsdl:message>
+    <wsdl:message name="mAddXhtml">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="xhtml" type="xsd2:tEpubXhtml"/>
+    </wsdl:message>
+    <wsdl:message name="mRemoveImage">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="image" type="xsd2:tEpubImage"/>
+    </wsdl:message>
+    <wsdl:message name="mAddStylesheet">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="css" type="xsd2:tEpubCss"/>
+    </wsdl:message>
+    <wsdl:message name="mBoolean">
+        <wsdl:part name="boolean" type="xsd:boolean"/>
+    </wsdl:message>
+    <wsdl:message name="mAddImage">
+        <wsdl:part name="token" type="xsd:long"/>
+        <wsdl:part name="image" type="xsd2:tEpubImage"/>
+    </wsdl:message>
+    <wsdl:portType name="ePubPortType">
+        <wsdl:operation name="startEpub">
+            <wsdl:input message="tns:mMetadata">
+                <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">metadata</wsdl:documentation>
+            </wsdl:input>
+            <wsdl:output message="tns:mLong">
+                <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">token</wsdl:documentation>
+            </wsdl:output>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="addXhtml">
+            <wsdl:input message="tns:mAddXhtml"/>
+            <wsdl:output message="tns:mInt">
+                <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">element</wsdl:documentation>
+            </wsdl:output>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="addStylesheet">
+            <wsdl:input message="tns:mAddStylesheet"/>
+            <wsdl:output message="tns:mInt">
+                <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">element</wsdl:documentation>
+            </wsdl:output>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="addImage">
+            <wsdl:input message="tns:mAddImage"/>
+            <wsdl:output message="tns:mInt">
+                <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">element</wsdl:documentation>
+            </wsdl:output>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="finalizeEpub">
+            <wsdl:input message="tns:mLong"/>
+            <wsdl:output message="tns:mVoid"/>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeXhtml">
+            <wsdl:input message="tns:mRemoveXhtml"/>
+            <wsdl:output message="tns:mBoolean"/>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeStylesheet">
+            <wsdl:input message="tns:mRemoveCss"/>
+            <wsdl:output message="tns:mBoolean"/>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeImage">
+            <wsdl:input message="tns:mRemoveImage"/>
+            <wsdl:output message="tns:mBoolean"/>
+            <wsdl:fault message="tns:mError" name="epuberror"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ePubSOAP" type="tns:ePubPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="startEpub">
+            <soap:operation soapAction="ePub#startEpub"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addXhtml">
+            <soap:operation soapAction="ePub#addXhtml"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addStylesheet">
+            <soap:operation soapAction="ePub#addStylesheet"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addImage">
+            <soap:operation soapAction="ePub#addImage"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="finalizeEpub">
+            <soap:operation soapAction="ePub#finalizeEpub"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeXhtml">
+            <soap:operation soapAction="ePub#removeXhtml"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeStylesheet">
+            <soap:operation soapAction="ePub#removeStylesheet"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeImage">
+            <soap:operation soapAction="ePub#removeImage"/>
+            <wsdl:input>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="http://univaq.it/mwt/soa/epub/data" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="epuberror">
+                <soap:fault name="epuberror" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ePub">
+        <wsdl:port binding="tns:ePubSOAP" name="ePubSOAPPort">
+            <soap:address location="http://localhost:8084/EPUBManager/services"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

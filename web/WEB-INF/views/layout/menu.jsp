@@ -16,7 +16,7 @@
 		id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav navbar-right">
                     <li><a href="${pageContext.request.contextPath}/packager/create"><spring:message code="frontend.menu.packager" /></a></li>
-                    <li><a href="${pageContext.request.contextPath}/manager/create"><spring:message code="frontend.menu.manager" /></a></li>
+                    <li><a href="${pageContext.request.contextPath}/ePubBiblio/upload-epub"><spring:message code="frontend.menu.biblio" /></a></li>
         	</li>
 	</div>
 	<!-- /.navbar-collapse -->

@@ -7,11 +7,18 @@ import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubResource;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
 import it.univaq.mwt.xml.epubmanager.business.model.Metadata;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/packager")
 public class EpubPackagerController {
 
+    @Value("#{cfgproperties.uploadDirectory}")
+    private String UPLOAD_DIR;
+    
     @Autowired
     private EPubService service;
 
@@ -337,6 +347,22 @@ public class EpubPackagerController {
 
         service.finalizeEpub(Long.parseLong(epub));
 
+        model.addAttribute("epub", epub);
+        
         return "download.epub";
+    }
+    
+     /**
+     * Gestione del download dell'Epub
+     */
+    @RequestMapping(value="/downloadEpub", method={RequestMethod.GET})
+    public void dowloadEpub(@RequestParam("epub") String epub, HttpServletResponse response) throws BusinessException, FileNotFoundException, IOException {
+        String downloadPath = UPLOAD_DIR + epub + File.separator + epub + ".epub";
+        File epubToDownlod = new File(downloadPath);
+        InputStream input = new FileInputStream(epubToDownlod);
+        response.setContentType("application/force-download");
+	response.setHeader("Content-Disposition", "attachment; filename=" + epubToDownlod.getName());
+        IOUtils.copy(input, response.getOutputStream());
+        response.flushBuffer();
     }
 }

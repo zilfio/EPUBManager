@@ -95,4 +95,11 @@
         <put-attribute name="body" value="/WEB-INF/views/packager/download_epub.jsp"/>
     </definition>
     
+    <!-- ePubBiblio -->
+    
+    <definition name="ePubBiblio.uploadEPub" extends="standard">
+        <put-attribute name="action" value="/ePubBiblio/upload-epub"/>
+        <put-attribute name="body" value="/WEB-INF/views/ePubBiblio/ePubBiblio_upload.jsp"/>
+    </definition>
+    
 </tiles-definitions>
