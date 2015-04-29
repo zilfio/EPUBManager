@@ -29,7 +29,7 @@
     <div class="well">
         <div class="form-group">
             <label for="xhtmlfiles"><spring:message code="uploadresources.xhtml" /></label>
-            <input id="xhtmlfiles" name="xhtmlfiles" type="file" multiple="true" class="file-loading" data-show-upload="false" accept="text/html, application/xhtml+xml" required />
+            <input id="xhtmlfiles" name="xhtmlfiles" type="file" multiple="true" class="file-loading" data-show-upload="false" accept=".html, .xhtml" required />
             <div id="errorxhtmlfiles" class="help-block"></div>
         </div>
     </div>
