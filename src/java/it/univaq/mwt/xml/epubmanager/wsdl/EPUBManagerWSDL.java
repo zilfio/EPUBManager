@@ -10,7 +10,6 @@ import it.univaq.mwt.xml.epubmanager.business.model.EpubImage;
 import it.univaq.mwt.xml.epubmanager.business.model.EpubXhtml;
 import it.univaq.mwt.xml.epubmanager.business.model.Metadata;
 import javax.jws.WebService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
